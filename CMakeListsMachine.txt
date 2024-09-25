@@ -48,6 +48,11 @@ ELSEIF ("${CMAKE_FQDN_HOST}" MATCHES "j(r|w)(login.*|c.*)")
   SET(CMAKE_C_COMPILER       nvc)
   SET(CMAKE_CXX_COMPILER     nvc++)
   SET(CMAKE_Fortran_COMPILER nvfortran)
+# JEDI
+ELSEIF ("${CMAKE_FQDN_HOST}" MATCHES "jpblt.*\.jupiter*")
+  SET(CMAKE_C_COMPILER       nvc)
+  SET(CMAKE_CXX_COMPILER     nvc++)
+  SET(CMAKE_Fortran_COMPILER nvfortran)
 ENDIF()
 
 # =========================================================================
