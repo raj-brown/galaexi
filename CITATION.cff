@@ -1,0 +1,116 @@
+cff-version: 1.2.0
+message: "If you find GALÆXI helpful, please cite as follows:"
+
+title: GALÆXI
+authors:
+  - family-names: Altmann
+    given-names: Christoph
+  - family-names: Atak
+    given-names: Muhammed
+  - family-names: Appel
+    given-names: Daniel
+  - family-names: Beck
+    given-names: Andrea
+  - family-names: Blind
+    given-names: Marcel
+  - family-names: Bolemann
+    given-names: Thomas
+  - family-names: Copplestone
+    given-names: Stephen
+  - family-names: Dürrwächter
+    given-names: Jakob
+  - family-names: Fechter
+    given-names: Stefan
+  - family-names: Flad
+    given-names: David
+  - family-names: Föll
+    given-names: Fabian
+  - family-names: Frank
+    given-names: Hannes
+  - family-names: Gao
+    given-names: Min
+  - family-names: Gassner
+    given-names: Gregor
+  - family-names: Hindenlang
+    given-names: Florian
+  - family-names: Hitz
+    given-names: Timon
+  - family-names: Hoffmann
+    given-names: Malte
+  - family-names: Jöns
+    given-names: Steven
+  - family-names: Jens
+    given-names: Keim
+  - family-names: Keller
+    given-names: Serena
+  - family-names: Kempf
+    given-names: Daniel
+  - family-names: Kopper
+    given-names: Patrick
+  - family-names: Krais
+    given-names: Nico
+  - family-names: Kuhn
+    given-names: Thomas
+  - family-names: Kurz
+    given-names: Marius
+  - family-names: Mossier
+    given-names: Pascal
+  - family-names: Müller
+    given-names: Christoph
+  - family-names: Munz
+    given-names: Claus-Dieter
+  - family-names: Neudorfer
+    given-names: Jonathan
+  - family-names: Núñez-de la Rosa
+    given-names: Jonatan
+  - family-names: Ortwein
+    given-names: Philip
+  - family-names: Schwarz
+    given-names: Anna
+  - family-names: Sonntag
+    given-names: Matthias
+  - family-names: Starr
+    given-names: Spencer
+  - family-names: Staudenmaier
+    given-names: Marc
+  - family-names: Zeifang
+    given-names: Jonas
+
+abstract: A high order discontinuous Galerkin framework for compressible flows on GPU systems 
+keywords:
+  - Discontinuous Galerkin
+  - High-Performance Computing
+  - Computational Fluid Dynamics
+license: GPL-3.0
+repository: https://github.com/flexi-framework/galaexi
+
+preferred-citation:
+  type: article
+  title: "GALÆXI: Solving complex compressible flows with high-order discontinuous Galerkin methods on accelerator-based systems"
+  authors:
+    - family-names: Kurz
+      given-names: Marius
+    - family-names: Kempf
+      given-names: Daniel
+    - family-names: Blind
+      given-names: Marcel P.
+    - family-names: Kopper
+      given-names: Patrick
+    - family-names: Offenhäuser
+      given-names: Philipp
+    - family-names: Schwarz
+      given-names: Anna
+    - family-names: Starr
+      given-names: Spencer
+    - family-names: Keim
+      given-names: Jens
+    - family-names: Beck
+      given-names: Andrea
+  year: 2025
+  month: 01
+  journal: Computer Physics Communications
+  volume: 306
+  pages: 109388
+  doi: 10.1016/j.cpc.2024.109388
+  url: https://www.sciencedirect.com/science/article/pii/S0010465524003114
+  notes: "Code available at: https://github.com/flexi-framework/galaexi"
