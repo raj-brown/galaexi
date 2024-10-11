@@ -35,18 +35,22 @@ GALÆXI is a scientific project. If you use GALÆXI for publications or
 presentations in science, please support the project by citing it.
 As general reference, please cite
 ```
-Kurz, M., Kempf, D., Blind, M., Kopper, P., Offenhäuser, P., Schwarz, A., Starr, S., Keim, J., Beck, A.,
+Kurz, M., Kempf, D., Blind, M. P., Kopper, P., Offenhäuser, P., Schwarz, A., Starr, S., Keim, J., Beck, A. (2025).
 GALÆXI: Solving complex compressible flows with high-order discontinuous Galerkin methods on accelerator-based systems,
-ArXiv preprint, https://doi.org/10.48550/arXiv.2404.12703.
+Computer Physics Communications, 306, 109388.
 ```
 or use the following Bibtex files
 
-    @misc{galaexi,
-      title  = {GAL{\AE}XI: Solving complex compressible flows with high-order discontinuous Galerkin methods on accelerator-based systems}, 
-      author = {Daniel Kempf and Marius Kurz and Marcel Blind and Patrick Kopper and Philipp Offenhäuser and Anna Schwarz and Spencer Starr and Jens Keim and Andrea Beck},
-      year   = {2024},
-      doi    = {https://doi.org/10.48550/arXiv.2404.12703},
-      note   = {Code available at \url{https://github.com/flexi-framework/galaexi}.}
+    @article{galaexi,
+      title   = {GAL{\AE}XI: Solving complex compressible flows with high-order discontinuous Galerkin methods on accelerator-based systems},
+      journal = {Computer Physics Communications},
+      volume  = {306},
+      pages   = {109388},
+      year    = {2025},
+      author  = {Marius Kurz and Daniel Kempf and Marcel P. Blind and Patrick Kopper and Philipp Offenhäuser and Anna Schwarz and Spencer Starr and Jens Keim and Andrea Beck},
+      url     = {https://www.sciencedirect.com/science/article/pii/S0010465524003114},
+      doi     = {https://doi.org/10.1016/j.cpc.2024.109388},
+      note    = {Code available at \url{https://github.com/flexi-framework/galaexi}.}
     }
 
 To refer to specific applications and features, you can also cite the appropriate paper from this [list][publications].
