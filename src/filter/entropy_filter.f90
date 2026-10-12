@@ -16,12 +16,13 @@ MODULE MOD_EntropyFilter
 
   SUBROUTINE ApplyEntropyFilter(U_in, tStage, iStage)
   USE MOD_PreProc
-  USE MODE_Mesh_Vars, ONLY: nElems
+  USE MOD_Mesh_Vars, ONLY: nElems
 
   IMPLICIT NONE
 
-  REAL, DEVICE, INTENT(INOUT) :: U_in(PP_nVar, 0:PP_N, 0:PP_NZ, nElems)
-  INTEGER, INTENT(IN) :: tStage, iStage
+  REAL, DEVICE, INTENT(INOUT) :: U_in(PP_nVar, 0:PP_N, 0:PP_N,0:PP_NZ, nElems)
+  REAL, INTENT(IN) :: tStage
+  INTEGER, INTENT(IN) :: iStage
 
   END SUBROUTINE ApplyEntropyFilter
 
