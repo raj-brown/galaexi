@@ -52,7 +52,7 @@ MODULE MOD_EntropyFilter
   CALL ChangeBasisVolume_GPU<<<nElems, nThreads, shmem_size>>>(&
   PP_nVar, PP_N, PP_N, nElems, d_sVdm_Leg, U_in, d_U_modal)
   CALL ModalDamping_Kernel<<<(nElems*nThreads + 255)/256, 256>>>(&
-  nElems, d_U_modal, 0.05)
+  nElems,PP_N, d_U_modal, 0.05)
 
   CALL ChangeBasisVolume_GPU<<<nElems, nThreads, shmem_size>>>(&
   PP_nVar, PP_N, PP_N, nElems, d_Vdm_Leg, d_U_modal, d_U_rec)
@@ -81,28 +81,28 @@ MODULE MOD_EntropyFilter
   END SUBROUTINE ApplyEntropyFilter
 
 
-  ATTRIBUTES(GLOBAL) SUBROUTINE ModalDamping_Kernel(nElems, U_modal, zeta)
+  ATTRIBUTES(GLOBAL) SUBROUTINE ModalDamping_Kernel(nElems, Nloc, U_modal, zeta)
   USE MOD_PreProc
   IMPLICIT NONE
-  INTEGER, VALUE, INTENT(IN)  :: nElems
-  REAL, DEVICE, INTENT(INOUT) :: U_modal(PP_nVar, 0:PP_N, 0:PP_N, 0:PP_NZ, nElems)
+  INTEGER, VALUE, INTENT(IN)  :: nElems, Nloc
+  REAL, DEVICE, INTENT(INOUT) :: U_modal(5, 0:Nloc, 0:Nloc, 0:Nloc, nElems)
   REAL, VALUE, INTENT(IN)     :: zeta
   INTEGER :: tid, nodeID, iElem
   INTEGER :: a,b,c,rest
   INTEGER :: nNodes
-  REAL, :: deg2, sigma
+  REAL :: deg2, sigma
 
-  nNodes = (PP_N+1)**2 * (PP_NZ+1)
+  nNodes = (Nloc+1)**2 * (Nloc+1)
   tid = (blockIdx%x - 1)* blockDim%x + threadIdx%x
   IF (tid >= nElems*nNodes) RETURN
   iElem = (tid -1) / nNodes + 1
   nodeID = MOD(tid-1, nNodes)
 
-  a = MOD(nodeID, PP_N+1)
-  rest = nodeID / (PP_N+1)
-  b = MOD(rest, PP_N+1)
-  rest = rest / (PP_N+1)
-  c = MOD(rest, PP_NZ+1)
+  a = MOD(nodeID, Nloc+1)
+  rest = nodeID / (Nloc+1)
+  b = MOD(rest, Nloc+1)
+  rest = rest / (Nloc+1)
+  c = MOD(rest, Nloc+1)
   deg2 = REAL(a**2 + b**2 + c**2)
   sigma = EXP(-zeta*deg2)
   U_modal(:,a,b,c,iElem) = sigma * U_modal(:,a,b,c,iElem)
