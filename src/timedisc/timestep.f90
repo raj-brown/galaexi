@@ -55,6 +55,7 @@ USE MOD_DG            ,ONLY: DGTimeDerivative_weakForm
 USE MOD_DG_Vars       ,ONLY: U,Ut,nTotalU,d_Ut,d_U
 USE MOD_PruettDamping ,ONLY: TempFilterTimeDeriv
 USE MOD_TimeDisc_Vars ,ONLY: dt,Ut_tmp,RKA,RKb,RKc,nRKStages,CurrentStage
+USE MOD_EntropyFilter  ,ONLY: ApplyEntropyFilter
 #if FV_ENABLED
 USE MOD_Indicator     ,ONLY: CalcIndicator
 #endif /*FV_ENABLED*/
@@ -116,6 +117,7 @@ DO iStage = 1,nRKStages
 #if PP_LIMITER
   IF(DoPPLimiter) CALL PPLimiter()
 #endif /*PP_LIMITER*/
+CALL ApplyEntropyFilter(d_U,tStage,iStage)
 END DO
 END SUBROUTINE TimeStepByLSERKW2
 
