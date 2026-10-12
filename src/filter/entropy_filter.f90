@@ -81,7 +81,7 @@ MODULE MOD_EntropyFilter
   END SUBROUTINE ApplyEntropyFilter
 
 
-  ATTRIBUTE(GLOBAL) SUBROUTINE ModalDamping_Kernel(nElems, U_modal, zeta)
+  ATTRIBUTES(GLOBAL) SUBROUTINE ModalDamping_Kernel(nElems, U_modal, zeta)
   USE MOD_PreProc
   IMPLICIT NONE
   INTEGER, VALUE, INTENT(IN)  :: nElems
@@ -90,7 +90,7 @@ MODULE MOD_EntropyFilter
   INTEGER :: tid, nodeID, iElem
   INTEGER :: a,b,c,rest
   INTEGER :: nNodes
-  REAL, :: degre2, sigma
+  REAL, :: deg2, sigma
 
   nNodes = (PP_N+1)**2 * (PP_NZ+1)
   tid = (blockIdx%x - 1)* blockDim%x + threadIdx%x
@@ -103,7 +103,7 @@ MODULE MOD_EntropyFilter
   b = MOD(rest, PP_N+1)
   rest = rest / (PP_N+1)
   c = MOD(rest, PP_NZ+1)
-  deg2 = REAL(a**2 + b**2 + c**2, KIND=REAL64)
+  deg2 = REAL(a**2 + b**2 + c**2)
   sigma = EXP(-zeta*deg2)
   U_modal(:,a,b,c,iElem) = sigma * U_modal(:,a,b,c,iElem)
 
