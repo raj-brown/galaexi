@@ -38,6 +38,7 @@ MODULE MOD_EntropyFilter
   INTEGER :: ierr
   IF (iStage == 1) THEN
    RETURN
+   END IF
 
   ALLOCATE(d_U_modal(PP_nVar, 0:PP_N, 0:PP_N, 0:PP_NZ, nElems))
   ALLOCATE(d_U_rec(PP_nVar, 0:PP_N, 0:PP_N, 0:PP_NZ, nElems))
