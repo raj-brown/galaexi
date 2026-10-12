@@ -1,3 +1,5 @@
+#include "flexi.h"
+
 MODULE MOD_EntropyFilter
   USE CUDAFOR
   IMPLICIT NONE
