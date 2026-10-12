@@ -18,7 +18,6 @@ MODULE MOD_EntropyFilter
 
   SUBROUTINE ApplyEntropyFilter(U_in, tStage, iStage)
   USE MOD_PreProc
-  USE MOD_GPU, ONLY: GPU_DefaultStream
   USE MOD_Mesh_Vars, ONLY: nElems
   USE MOD_Interpolation_Vars, ONLY: d_Vdm_Leg, d_sVdm_Leg
   USE MOD_ChangeBasisByDim, ONLY: ChangeBasisVolume_GPU
@@ -61,7 +60,7 @@ MODULE MOD_EntropyFilter
   error_abs = MAXVAL(ABS(U_original - U_reconstructed))
   norm_ref = SQRT(SUM(U_original**2))
 
-  error_rel = SQRT(SUM((U_original - U_reconstructed)**2)) / MAX(TINY, norm_ref)
+  error_rel = SQRT(SUM((U_original - U_reconstructed)**2)) / MAX(1E-30, norm_ref)
 
   WRITE(*,'(A,I4,A,ES14.6)') &
       'EntropyFilter reconstruction: stage=',iStage, &
