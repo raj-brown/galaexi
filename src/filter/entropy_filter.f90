@@ -35,7 +35,7 @@ MODULE MOD_EntropyFilter
   INTEGER :: nThreads, shmem_size
   INTEGER :: bytes_per_real
   INTEGER :: ierr
-  IF (iStage == 1) THEN
+  IF (iStage /= 1) THEN
    RETURN
    END IF
 
@@ -51,6 +51,8 @@ MODULE MOD_EntropyFilter
 
   CALL ChangeBasisVolume_GPU<<<nElems, nThreads, shmem_size>>>(&
   PP_nVar, PP_N, PP_N, nElems, d_sVdm_Leg, U_in, d_U_modal)
+  CALL ModalDamping_Kernel<<<(nElems*nThreads + 255)/256, 256>>>(&
+  nElems, d_U_modal, 0.05)
 
   CALL ChangeBasisVolume_GPU<<<nElems, nThreads, shmem_size>>>(&
   PP_nVar, PP_N, PP_N, nElems, d_Vdm_Leg, d_U_modal, d_U_rec)
@@ -63,11 +65,11 @@ MODULE MOD_EntropyFilter
   error_rel = SQRT(SUM((U_original - U_reconstructed)**2)) / MAX(1E-30, norm_ref)
 
   WRITE(*,'(A,I4,A,ES14.6)') &
-      'EntropyFilter reconstruction: stage=',iStage, &
+      'EntropyFilter modal damping: stage=',iStage, &
       ' relative_L2=',error_rel
 
     WRITE(*,'(A,ES14.6)') &
-      'EntropyFilter reconstruction: max_abs=',error_abs
+      'EntropyFilter modal damping: max_abs=',error_abs
 
     !-------------------------------------------------------------
     ! Release temporary memory
@@ -77,6 +79,42 @@ MODULE MOD_EntropyFilter
 
 
   END SUBROUTINE ApplyEntropyFilter
+
+
+  ATTRIBUTE(GLOBAL) SUBROUTINE ModalDamping_Kernel(nElems, U_modal, zeta)
+  USE MOD_PreProc
+  IMPLICIT NONE
+  INTEGER, VALUE, INTENT(IN)  :: nElems
+  REAL, DEVICE, INTENT(INOUT) :: U_modal(PP_nVar, 0:PP_N, 0:PP_N, 0:PP_NZ, nElems)
+  REAL, VALUE, INTENT(IN)     :: zeta
+  INTEGER :: tid, nodeID, iElem
+  INTEGER :: a,b,c,rest
+  INTEGER :: nNodes
+  REAL, :: degre2, sigma
+
+  nNodes = (PP_N+1)**2 * (PP_NZ+1)
+  tid = (blockIdx%x - 1)* blockDim%x + threadIdx%x
+  IF (tid >= nElems*nNodes) RETURN
+  iElem = (tid -1) / nNodes + 1
+  nodeID = MOD(tid-1, nNodes)
+
+  a = MOD(nodeID, PP_N+1)
+  rest = nodeID / (PP_N+1)
+  b = MOD(rest, PP_N+1)
+  rest = rest / (PP_N+1)
+  c = MOD(rest, PP_NZ+1)
+  deg2 = REAL(a**2 + b**2 + c**2, KIND=REAL64)
+  sigma = EXP(-zeta*deg2)
+  U_modal(:,a,b,c,iElem) = sigma * U_modal(:,a,b,c,iElem)
+
+
+
+
+
+
+  END SUBROUTINE ModalDamping_Kernel
+
+
 
 
   SUBROUTINE FinalizeEntropyFilter()
