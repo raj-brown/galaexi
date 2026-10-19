@@ -117,7 +117,7 @@ IMPLICIT NONE
 INTEGER, VALUE, INTENT(IN)  :: nElems, Nloc
 REAL, VALUE, INTENT(IN)     :: gammaGas
 REAL, DEVICE, INTENT(IN)     :: U(5, 0:Nloc, 0:Nloc, 0:Nloc, nElems)
-REAL, VALUE, INTENT(OUT)     :: rhoMin(nElems), pMin(nElems), sMIN(nElems)
+REAL, DEVICE, INTENT(OUT)     :: rhoMin(nElems), pMin(nElems), sMIN(nElems)
 INTEGER :: iElem, i,j,k
 REAL :: rho, mom2, pressure, entropy
 REAL :: rhoLo, pLo, sLo
