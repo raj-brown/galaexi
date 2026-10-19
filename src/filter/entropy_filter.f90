@@ -107,14 +107,51 @@ MODULE MOD_EntropyFilter
   sigma = EXP(-zeta*deg2)
   U_modal(:,a,b,c,iElem) = sigma * U_modal(:,a,b,c,iElem)
 
-
-
-
-
-
   END SUBROUTINE ModalDamping_Kernel
 
 
+ATTRIBUTES(GLOBAL) SUBROUTINE EntropyMin_Kernel(nElems, Nloc, U, gammaGas, rhoMin, pMin, sMIN)
+
+IMPLICIT NONE
+
+INTEGER, VALUE, INTENT(IN)  :: nElems, Nloc
+REAL, VALUE, INTENT(IN)     :: gammaGas
+REAL, DEVICE, INTENT(IN)     :: U(5, 0:Nloc, 0:Nloc, 0:Nloc, nElems)
+REAL, VALUE, INTENT(OUT)     :: rhoMin(nElems), pMin(nElems), sMIN(nElems)
+INTEGER :: iElem, i,j,k
+REAL :: rho, mom2, pressure, entropy
+REAL :: rhoLo, pLo, sLo
+iElem = (blockIdx%x - 1)* blockDim%x + threadIdx%x
+IF (iElem > nElems) RETURN
+rhoLo = HUGE(1.0)
+pLo = HUGE(1.0)
+sLo = HUGE(1.0)
+DO k = 0, Nloc
+  DO j = 0, Nloc
+    DO i = 0, Nloc
+      rho = U(1,i,j,k,iElem)
+      rhoLo = MIN(rhoLo, rho)
+      IF (rho <= 0.0) THEN
+        pLo = MIN(pLo, -1.0)
+        sLo = MIN(sLo, -1.0E30)
+      ENDIF
+
+      mom2 = U(2,i,j,k,iElem)**2 + U(3,i,j,k,iElem)**2 + U(4,i,j,k,iElem)**2
+      pressure = (gammaGas-1.0)*(U(5,i,j,k,iElem) - 0.5*mom2/rho)
+      pLo = MIN(pLo, pressure)
+      if (pressure <= 0.0) THEN
+        sLo = MIN(sLo, -1.0E30)
+        CYCLE
+      ENDIF
+      entropy = LOG(pressure) - gammaGas*LOG(rho)
+      sLo = MIN(sLo, entropy)
+      END DO
+  END DO
+END DO
+rhoMin(iElem) = rhoLo
+pMin(iElem) = pLo
+sMIN(iElem) = sLo
+END SUBROUTINE EntropyMin_Kernel
 
 
   SUBROUTINE FinalizeEntropyFilter()
