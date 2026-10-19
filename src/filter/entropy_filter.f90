@@ -108,7 +108,7 @@ MODULE MOD_EntropyFilter
 
   nNodes = (Nloc+1)**2 * (Nloc+1)
   tid = (blockIdx%x - 1)* blockDim%x + threadIdx%x
-  IF (tid >= nElems*nNodes) RETURN
+  IF (tid > nElems*nNodes) RETURN
   iElem = (tid -1) / nNodes + 1
   nodeID = MOD(tid-1, nNodes)
 
@@ -117,7 +117,7 @@ MODULE MOD_EntropyFilter
   b = MOD(rest, Nloc+1)
   rest = rest / (Nloc+1)
   c = MOD(rest, Nloc+1)
-  deg2 = REAL(a**2 + b**2 + c**2)
+  deg2 = REAL(MAX(a,b,c)**2)
   sigma = EXP(-zeta*deg2)
   U_modal(:,a,b,c,iElem) = sigma * U_modal(:,a,b,c,iElem)
 
@@ -148,6 +148,7 @@ DO k = 0, Nloc
       IF (rho <= 0.0) THEN
         pLo = MIN(pLo, -1.0)
         sLo = MIN(sLo, -1.0E30)
+        CYCLE
       ENDIF
 
       mom2 = U(2,i,j,k,iElem)**2 + U(3,i,j,k,iElem)**2 + U(4,i,j,k,iElem)**2
