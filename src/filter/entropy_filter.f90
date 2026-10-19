@@ -38,8 +38,7 @@ MODULE MOD_EntropyFilter
   INTEGER :: nThreads, shmem_size
   INTEGER :: bytes_per_real
   INTEGER :: ierr
-  IF (iStage /= 1) THEN
-   RETURN
+  IF (iStage /= 1) RETURN
    ALLOCATE(d_rhoMin(nElems), d_pMin(nElems), d_sMIN(nElems))
    ALLOCATE(h_rhoMin(nElems), h_pMin(nElems), h_sMIN(nElems))
    CALL EntropyMin_Kernel<<<(nElems + 255)/256, 256>>>(nElems, PP_N, U_in, Kappa, d_rhoMin, d_pMin, d_sMIN)
@@ -52,8 +51,6 @@ MODULE MOD_EntropyFilter
       'EntropyFilter: min_p=',MINVAL(h_pMin)
     WRITE(*,'(A,ES14.6)') &
       'EntropyFilter: min_s=',MINVAL(h_sMIN)
-
-  ENDIF
   DEALLOCATE(d_rhoMin, d_pMin, d_sMIN)
   DEALLOCATE(h_rhoMin, h_pMin, h_sMIN)
   ALLOCATE(d_U_modal(PP_nVar, 0:PP_N, 0:PP_N, 0:PP_NZ, nElems))
