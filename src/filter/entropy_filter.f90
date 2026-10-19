@@ -18,6 +18,7 @@ MODULE MOD_EntropyFilter
 
   SUBROUTINE ApplyEntropyFilter(U_in, tStage, iStage)
   USE MOD_PreProc
+  USE MOD_EOS_Vars, ONLY: Kappa
   USE MOD_Mesh_Vars, ONLY: nElems
   USE MOD_Interpolation_Vars, ONLY: d_Vdm_Leg, d_sVdm_Leg
   USE MOD_ChangeBasisByDim, ONLY: ChangeBasisVolume_GPU
@@ -28,6 +29,8 @@ MODULE MOD_EntropyFilter
   INTEGER, INTENT(IN) :: iStage
   REAL, DEVICE, ALLOCATABLE :: d_U_modal(:,:,:,:,:)
   REAL, DEVICE, ALLOCATABLE :: d_U_rec(:,:,:,:,:)
+  REAL, DEVICE, ALLOCATABLE :: d_rhoMin(:), d_pMin(:), d_sMIN(:)
+  REAL, ALLOCATABLE :: h_rhoMin(:), h_pMin(:), h_sMIN(:)
 
   REAL, ALLOCATABLE :: U_original(:,:,:,:,:)
   REAL, ALLOCATABLE :: U_reconstructed(:,:,:,:,:)
@@ -37,8 +40,22 @@ MODULE MOD_EntropyFilter
   INTEGER :: ierr
   IF (iStage /= 1) THEN
    RETURN
-   END IF
+   ALLOCATE(d_rhoMin(nElems), d_pMin(nElems), d_sMIN(nElems))
+   ALLOCATE(h_rhoMin(nElems), h_pMin(nElems), h_sMIN(nElems))
+   CALL EntropyMin_Kernel<<<(nElems + 255)/256, 256>>>(nElems, PP_N, U_in, Kappa, d_rhoMin, d_pMin, d_sMIN)
+   h_rhoMin = d_rhoMin
+   h_pMin = d_pMin
+   h_sMIN = d_sMIN
+   WRITE(*,'(A,ES14.6)') &
+      'EntropyFilter: min_rho=',MINVAL(h_rhoMin)
+    WRITE(*,'(A,ES14.6)') &
+      'EntropyFilter: min_p=',MINVAL(h_pMin)
+    WRITE(*,'(A,ES14.6)') &
+      'EntropyFilter: min_s=',MINVAL(h_sMIN)
 
+  ENDIF
+  DEALLOCATE(d_rhoMin, d_pMin, d_sMIN)
+  DEALLOCATE(h_rhoMin, h_pMin, h_sMIN)
   ALLOCATE(d_U_modal(PP_nVar, 0:PP_N, 0:PP_N, 0:PP_NZ, nElems))
   ALLOCATE(d_U_rec(PP_nVar, 0:PP_N, 0:PP_N, 0:PP_NZ, nElems))
 
